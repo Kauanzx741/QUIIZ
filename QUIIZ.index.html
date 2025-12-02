@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz de Terror - Teste seu conhecimento</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            min-height: 100vh;
+            background-image: 
+                radial-gradient(circle at 10% 20%, rgba(100, 0, 0, 0.1) 0%, transparent 20%),
+                radial-gradient(circle at 90% 80%, rgba(0, 0, 100, 0.1) 0%, transparent 20%);
+        }
+        
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #333;
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            color: #d32f2f;
+            font-size: 3rem;
+            text-shadow: 0 0 10px rgba(211, 47, 47, 0.5);
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            color: #aaa;
+            font-size: 1.2rem;
+            letter-spacing: 2px;
+        }
+        
+        .quiz-section, .result-section, .promo-section {
+            background-color: #1a1a1a;
+            border-radius: 10px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.5);
+            border: 1px solid #333;
+        }
+        
+        .question-container {
+            margin-bottom: 30px;
+        }
+        
+        .question-number {
+            color: #d32f2f;
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .question-text {
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        
+        .options-container {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 15px;
+        }
+        
+        @media (min-width: 768px) {
+            .options-container {
+                grid-template-columns: 1fr 1fr;
+            }
+        }
+        
+        .option {
+            background-color: #252525;
+            border: 1px solid #444;
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1.1rem;
+        }
+        
+        .option:hover {
+            background-color: #333;
+            border-color: #d32f2f;
+            transform: translateY(-3px);
+        }
+        
+        .option.selected {
+            background-color: rgba(211, 47, 47, 0.2);
+            border-color: #d32f2f;
+        }
+        
+        .option.correct {
+            background-color: rgba(76, 175, 80, 0.3);
+            border-color: #4CAF50;
+        }
+        
+        .option.wrong {
+            background-color: rgba(211, 47, 47, 0.3);
+            border-color: #d32f2f;
+        }
+        
+        .buttons-container {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+        
+        .btn {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-prev {
+            background-color: #333;
+            color: #e0e0e0;
+        }
+        
+        .btn-next {
+            background-color: #d32f2f;
+            color: white;
+        }
+        
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+        }
+        
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .result-section {
+            text-align: center;
+            display: none;
+        }
+        
+        .result-title {
+            color: #d32f2f;
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+        
+        .score-display {
+            font-size: 5rem;
+            font-weight: bold;
+            color: #d32f2f;
+            margin: 20px 0;
+            text-shadow: 0 0 15px rgba(211, 47, 47, 0.7);
+        }
+        
+        .score-text {
+            font-size: 1.3rem;
+            margin-bottom: 30px;
+        }
+        
+        .promo-section {
+            text-align: center;
+            display: none;
+            border: 2px solid #d32f2f;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { border-color: #d32f2f; }
+            50% { border-color: #ff5252; }
+            100% { border-color: #d32f2f; }
+        }
+        
+        .promo-title {
+            color: #ffeb3b;
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+        
+        .promo-text {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+        
+        .price {
+            font-size: 2.5rem;
+            color: #4CAF50;
+            font-weight: bold;
+            margin: 20px 0;
+        }
+        
+        .original-price {
+            text-decoration: line-through;
+            color: #aaa;
+            font-size: 1.5rem;
+        }
+        
+        .timer-container {
+            margin: 25px 0;
+            padding: 15px;
+            background-color: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+        }
+        
+        .timer-title {
+            color: #aaa;
+            margin-bottom: 10px;
+        }
+        
+        #timer {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ff5252;
+            font-family: monospace;
+        }
+        
+        .btn-promo {
+            background: linear-gradient(to right, #4CAF50, #8BC34A);
+            color: white;
+            font-size: 1.5rem;
+            padding: 15px 40px;
+            margin: 20px 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-promo:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+        
+        .btn-promo i {
+            font-size: 1.8rem;
+        }
+        
+        .warning {
+            color: #ff9800;
+            font-size: 0.9rem;
+            margin-top: 15px;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #666;
+            font-size: 0.9rem;
+            border-top: 1px solid #333;
+            margin-top: 30px;
+        }
+        
+        .progress-bar {
+            height: 8px;
+            background-color: #333;
+            border-radius: 4px;
+            margin-bottom: 20px;
+            overflow: hidden;
+        }
+        
+        .progress {
+            height: 100%;
+            background-color: #d32f2f;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-ghost"></i> QUIZ DE TERROR</h1>
+            <p class="subtitle">Teste seu conhecimento sobre filmes de terror clássicos</p>
+        </header>
+        
+        <section class="quiz-section" id="quiz-section">
+            <div class="progress-bar">
+                <div class="progress" id="progress-bar"></div>
+            </div>
+            
+            <div class="question-container">
+                <div class="question-number" id="question-number">Pergunta 1 de 5</div>
+                <div class="question-text" id="question-text">Carregando pergunta...</div>
+                
+                <div class="options-container" id="options-container">
+                    <!-- Opções serão inseridas aqui pelo JavaScript -->
+                </div>
+            </div>
+            
+            <div class="buttons-container">
+                <button class="btn btn-prev" id="prev-btn" disabled>
+                    <i class="fas fa-arrow-left"></i> Anterior
+                </button>
+                <button class="btn btn-next" id="next-btn">
+                    Próxima <i class="fas fa-arrow-right"></i>
+                </button>
+            </div>
+        </section>
+        
+        <section class="result-section" id="result-section">
+            <h2 class="result-title">SEU RESULTADO</h2>
+            <div class="score-display" id="final-score">0/5</div>
+            <p class="score-text" id="score-message">Você é um iniciante no mundo do terror!</p>
+            
+            <div class="promo-section" id="promo-section">
+                <h3 class="promo-title"><i class="fas fa-bolt"></i> PROMOÇÃO ESPECIAL!</h3>
+                <p class="promo-text">Por apenas <span class="price">R$ 10,00</span> <span class="original-price">(R$ 25,00)</span></p>
+                <p class="promo-text">Desbloqueie mais quizzes de terror e descubra seu verdadeiro nível de conhecimento!</p>
+                
+                <div class="timer-container">
+                    <div class="timer-title">Oferta expira em:</div>
+                    <div id="timer">15:00</div>
+                </div>
+                
+                <button class="btn btn-promo" id="whatsapp-btn">
+                    <i class="fab fa-whatsapp"></i> QUERO DESBLOQUEAR AGORA!
+                </button>
+                
+                <p class="warning">Esta oferta especial está disponível por tempo limitado!</p>
+            </div>
+        </section>
+        
+        <footer class="footer">
+            <p>Quiz de Terror &copy; 2023 - Todos os direitos reservados</p>
+            <p>Este site é apenas para fins de entretenimento.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Dados do quiz
+        const quizQuestions = [
+            {
+                question: "Em 'O Iluminado' (1980), qual é a famosa frase que Jack Torrance digita repetidamente?",
+                options: [
+                    "Tudo trabalho e nada de diversão faz de Jack um bom menino",
+                    "O inverno está chegando",
+                    "Aqui está Johnny!",
+                    "Tudo trabalho e nenhuma diversão faz do Jack um menino chato"
+                ],
+                correct: 3
+            },
+            {
+                question: "Qual é o nome do vilão principal da franquia 'Pânico'?",
+                options: [
+                    "Jason Voorhees",
+                    "Michael Myers",
+                    "Ghostface",
+                    "Freddy Krueger"
+                ],
+                correct: 2
+            },
+            {
+                question: "Em 'O Exorcista' (1973), qual é o nome da menina possuída?",
+                options: [
+                    "Regan MacNeil",
+                    "Laurie Strode",
+                    "Nancy Thompson",
+                    "Sidney Prescott"
+                ],
+                correct: 0
+            },
+            {
+                question: "Qual destes filmes de terror é baseado em uma história real?",
+                options: [
+                    "O Chamado",
+                    "Invocação do Mal",
+                    "Hallowen - A Noite do Terror",
+                    "It: A Coisa"
+                ],
+                correct: 1
+            },
+            {
+                question: "Qual é a regra principal para sobreviver em 'A Hora do Pesadelo'?",
+                options: [
+                    "Não durma",
+                    "Não tenha medo",
+                    "Não corra para cima da escada",
+                    "Não olhe para trás"
+                ],
+                correct: 0
+            }
+        ];
+
+        // Elementos DOM
+        const quizSection = document.getElementById('quiz-section');
+        const resultSection = document.getElementById('result-section');
+        const promoSection = document.getElementById('promo-section');
+        const questionNumber = document.getElementById('question-number');
+        const questionText = document.getElementById('question-text');
+        const optionsContainer = document.getElementById('options-container');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const progressBar = document.getElementById('progress-bar');
+        const finalScore = document.getElementById('final-score');
+        const scoreMessage = document.getElementById('score-message');
+        const timerElement = document.getElementById('timer');
+        const whatsappBtn = document.getElementById('whatsapp-btn');
+
+        // Estado do quiz
+        let currentQuestion = 0;
+        let userAnswers = new Array(quizQuestions.length).fill(null);
+        let score = 0;
+
+        // Timer da promoção (15 minutos em segundos)
+        let promoTime = 15 * 60; // 15 minutos em segundos
+
+        // Inicializar o quiz
+        function initQuiz() {
+            showQuestion(currentQuestion);
+            updateButtons();
+            updateProgressBar();
+        }
+
+        // Mostrar pergunta atual
+        function showQuestion(index) {
+            const question = quizQuestions[index];
+            
+            questionNumber.textContent = `Pergunta ${index + 1} de ${quizQuestions.length}`;
+            questionText.textContent = question.question;
+            
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, optionIndex) => {
+                const optionElement = document.createElement('div');
+                optionElement.className = 'option';
+                
+                // Verificar se esta opção foi selecionada anteriormente
+                if (userAnswers[index] === optionIndex) {
+                    optionElement.classList.add('selected');
+                }
+                
+                optionElement.textContent = option;
+                optionElement.addEventListener('click', () => selectOption(optionIndex));
+                
+                optionsContainer.appendChild(optionElement);
+            });
+        }
+
+        // Selecionar uma opção
+        function selectOption(optionIndex) {
+            userAnswers[currentQuestion] = optionIndex;
+            showQuestion(currentQuestion); // Atualizar para mostrar a seleção
+            updateButtons();
+        }
+
+        // Atualizar estado dos botões
+        function updateButtons() {
+            // Botão anterior
+            prevBtn.disabled = currentQuestion === 0;
+            
+            // Botão próximo
+            if (currentQuestion < quizQuestions.length - 1) {
+                // Não é a última pergunta
+                nextBtn.textContent = 'Próxima';
+                nextBtn.disabled = userAnswers[currentQuestion] === null;
+            } else {
+                // É a última pergunta
+                nextBtn.textContent = 'Ver Resultado';
+                nextBtn.disabled = userAnswers[currentQuestion] === null;
+            }
+        }
+
+        // Atualizar barra de progresso
+        function updateProgressBar() {
+            const progress = ((currentQuestion + 1) / quizQuestions.length) * 100;
+            progressBar.style.width = `${progress}%`;
+        }
+
+        // Calcular pontuação
+        function calculateScore() {
+            score = 0;
+            userAnswers.forEach((answer, index) => {
+                if (answer === quizQuestions[index].correct) {
+                    score++;
+                }
+            });
+            
+            return score;
+        }
+
+        // Mostrar resultado
+        function showResult() {
+            calculateScore();
+            
+            // Esconder quiz e mostrar resultado
+            quizSection.style.display = 'none';
+            resultSection.style.display = 'block';
+            promoSection.style.display = 'block';
+            
+            // Mostrar pontuação
+            finalScore.textContent = `${score}/${quizQuestions.length}`;
+            
+            // Personalizar mensagem baseada na pontuação
+            let message = "";
+            if (score === quizQuestions.length) {
+                message = "Incrível! Você é um verdadeiro mestre do terror!";
+            } else if (score >= quizQuestions.length * 0.7) {
+                message = "Muito bom! Você conhece bem o gênero de terror!";
+            } else if (score >= quizQuestions.length * 0.5) {
+                message = "Bom trabalho! Você tem um conhecimento razoável sobre filmes de terror.";
+            } else {
+                message = "Você é um iniciante no mundo do terror! Aproveite a promoção para aprender mais!";
+            }
+            
+            scoreMessage.textContent = message;
+            
+            // Iniciar timer da promoção
+            startPromoTimer();
+        }
+
+        // Timer da promoção
+        function startPromoTimer() {
+            // Atualizar timer imediatamente
+            updateTimerDisplay();
+            
+            const timerInterval = setInterval(() => {
+                promoTime--;
+                updateTimerDisplay();
+                
+                // Quando o timer chegar a 0
+                if (promoTime <= 0) {
+                    clearInterval(timerInterval);
+                    timerElement.textContent = "00:00";
+                    timerElement.style.color = "#ff0000";
+                    
+                    // Desabilitar botão de compra
+                    whatsappBtn.disabled = true;
+                    whatsappBtn.textContent = "PROMOÇÃO EXPIRADA";
+                    whatsappBtn.style.background = "#666";
+                    whatsappBtn.style.cursor = "not-allowed";
+                }
+            }, 1000);
+        }
+
+        // Atualizar display do timer
+        function updateTimerDisplay() {
+            // Formatar o tempo (MM:SS)
+            const minutes = Math.floor(promoTime / 60);
+            const seconds = promoTime % 60;
+            timerElement.textContent = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        // Redirecionar para WhatsApp
+        function redirectToWhatsApp() {
+            const message = `Olá! Acabei de fazer o Quiz de Terror e obtive ${score} de ${quizQuestions.length} pontos! Quero aproveitar a promoção de R$ 10,00 para desbloquear mais quizzes.`;
+            const phoneNumber = "551989166847"; // Adicionado código do Brasil (55) e removido o hífen
+            const url = `https://wa.me/${phoneNumber}?text=${encodeURIComponent(message)}`;
+            window.open(url, '_blank');
+        }
+
+        // Event Listeners
+        prevBtn.addEventListener('click', () => {
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                showQuestion(currentQuestion);
+                updateButtons();
+                updateProgressBar();
+            }
+        });
+
+        nextBtn.addEventListener('click', () => {
+            if (currentQuestion < quizQuestions.length - 1) {
+                currentQuestion++;
+                showQuestion(currentQuestion);
+                updateButtons();
+                updateProgressBar();
+            } else {
+                // Última pergunta - mostrar resultado
+                showResult();
+            }
+        });
+
+        whatsappBtn.addEventListener('click', redirectToWhatsApp);
+
+        // Inicializar o quiz quando a página carregar
+        document.addEventListener('DOMContentLoaded', initQuiz);
+    </script>
+</body>
+</html>
